@@ -11,10 +11,13 @@ geocode = Blueprint("geocode", __name__)
 def geo():
     result = json.loads(request.data.decode("utf-8"))
     try:
-        address = result["address"]
+        street_address = result["street_address"]
+        city = result["city"]
+        state = result["state"]
+        zip_code = result["zip_code"]
     except:
-        return "address attribute not found"
-    location = geolocator.geocode(f"{address}")
+        return "invalid address"
+    location = geolocator.geocode(f"{street_address}, {city}, {state}, {zip_code}")
     return {
         "latitude": location.latitude,
         "longitude": location.longitude,
@@ -28,6 +31,6 @@ def reverse():
         longitude = result["longitude"]
         latitude = result["latitude"]
     except:
-        return "There was an error with your request"
+        return "latitude and longitude not provided"
     location = geolocator.reverse(f"{latitude}, {longitude}")
-    return location.address
+    return location.raw
